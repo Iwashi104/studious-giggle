@@ -87,11 +87,11 @@
     width: 100%;
     flex-shrink: 0;
     /* cliff.png を繰り返し表示（高さはJSで設定） */
-    background: url('cliff001.png') right center / 200% auto no-repeat;
+    background: url('cliff001.png') right center / 100% auto no-repeat;
   }
   /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: url('cliff001.png') right top / 200% auto no-repeat;
+    background: url('cliff_summit.png') right top / 100% auto no-repeat;
   }
 
   /* 地面ライン */
@@ -411,10 +411,17 @@ function buildCliff() {
   strip.innerHTML = '';
   strip.style.transform = 'translateY(0px)';
 
-  // 通常パネル + 頂上パネル（一番上）
-  for (let i = 0; i <= TOTAL_PANELS; i++) {
+  // 頂上パネル
+  const summit = document.createElement('div');
+  summit.className = 'cliff-panel summit';
+  summit.style.height = CLIFF_PANEL_H + 'px';
+  strip.appendChild(summit);
+
+  // 通常パネル：問題数ぶん＋画面を埋めるための余分を追加
+  const extraPanels = Math.ceil(window.innerHeight / CLIFF_PANEL_H) + 1;
+  for (let i = 0; i < TOTAL_PANELS + extraPanels; i++) {
     const panel = document.createElement('div');
-    panel.className = 'cliff-panel' + (i === TOTAL_PANELS ? ' summit' : '');
+    panel.className = 'cliff-panel';
     panel.style.height = CLIFF_PANEL_H + 'px';
     strip.appendChild(panel);
   }
@@ -463,7 +470,7 @@ function checkAnswer() {
 
   if (isCorrect) {
     correctCount++;
-    const isLast = currentIdx + 1 >= questions.length;
+    const isLast = currentIdx >= questions.length - 1;
     document.getElementById('next-btn').style.display  = 'block';
     document.getElementById('next-btn').textContent    =
       isLast ? '頂上へ！ ↑' : '次の問題へ登る ↑';
@@ -487,6 +494,20 @@ function retryQuestion() {
 // ── 次の問題・スクロール ──
 function nextQuestion() {
   if (isAnimating) return;
+
+  // 最後の問題なら即座に頂上へ
+  if (currentIdx >= questions.length - 1) {
+    document.getElementById('quiz-card').classList.add('scrolling');
+    cliffOffset += CLIFF_PANEL_H;
+    document.getElementById('cliff-strip').style.transform =
+      `translateY(${cliffOffset}px)`;
+    skyOffset += SKY_SCROLL_PX;
+    document.getElementById('bg-img').style.transform =
+      `translateY(${skyOffset}px)`;
+    setTimeout(() => { showSummit(); }, 1100);
+    return;
+  }
+
   isAnimating = true;
 
   // カードを隠す
@@ -501,7 +522,7 @@ function nextQuestion() {
   skyOffset += SKY_SCROLL_PX;
   document.getElementById('bg-img').style.transform =
     `translateY(${skyOffset}px)`;
-
+console.log('currentIdx:', currentIdx, 'length:', questions.length);
   setTimeout(() => {
     currentIdx++;
     updateUI();
