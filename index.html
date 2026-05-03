@@ -22,7 +22,7 @@
        CLIFF_STRIP_WIDTH   : 崖画像の横幅（画面幅に対する%）
        ────────────────────────────────────────── */
     --sky-image-height: 3000px; /* sky.png の実際の高さに合わせる */
-    --cliff-w: 70%;             /* 崖の横幅 */
+    --cliff-w: 100%;             /* 崖の横幅 */
   }
 
   html, body {
@@ -87,11 +87,11 @@
     width: 100%;
     flex-shrink: 0;
     /* cliff.png を繰り返し表示（高さはJSで設定） */
-    background: url('cliff001.png') left center / 100% auto no-repeat;
+    background: url('cliff001.png') right center / 200% auto no-repeat;
   }
   /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: url('cliff001.png') left top / 100% auto no-repeat;
+    background: url('cliff001.png') right top / 200% auto no-repeat;
   }
 
   /* 地面ライン */
