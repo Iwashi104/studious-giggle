@@ -87,11 +87,11 @@
     width: 100%;
     flex-shrink: 0;
     /* cliff.png を繰り返し表示（高さはJSで設定） */
-    background: url('cliff001.png') calc(50% - 250px) center / 300% auto no-repeat;
+    background: url('cliff001.png') calc(50% - 150px) center / 300% auto no-repeat;
   }
   /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: url('cliff001.png') calc(50% - 250px) top / 300% auto no-repeat;
+    background: url('cliff001.png') calc(50% - 150px) top / 300% auto no-repeat;
   }
 
   /* 地面ライン */
@@ -331,31 +331,31 @@
 const QUESTIONS = [
   {
     q: "VBAでセルA1の値を取得するコードを書いてください。",
-    a: "Range(\"A1\").Value",
+    a: "1",
     alt: ["Cells(1,1).Value"],
     explanation: "Range(\"A1\").Value または Cells(1,1).Value でセルA1の値を取得できます。"
   },
   {
     q: "VBAでメッセージボックスに「Hello」と表示するコードを書いてください。",
-    a: "MsgBox \"Hello\"",
+    a: "1",
     alt: ["MsgBox(\"Hello\")"],
     explanation: "MsgBox 関数はダイアログボックスにメッセージを表示します。"
   },
   {
     q: "変数 x を整数型で宣言するコードを書いてください。",
-    a: "Dim x As Integer",
+    a: "1",
     alt: [],
     explanation: "Dim 変数名 As データ型 の形式で変数を宣言します。整数型は Integer です。"
   },
   {
     q: "VBAでFor i = 1 To 10のループを終了するキーワードは何ですか？",
-    a: "Next i",
+    a: "1",
     alt: ["Next"],
     explanation: "For～NextループはNext（または Next 変数名）でループブロックを閉じます。"
   },
   {
     q: "VBAでコメントを書くときに行頭に使う記号は何ですか？",
-    a: "'",
+    a: "1",
     alt: ["' （アポストロフィ）", "アポストロフィ"],
     explanation: "VBAではアポストロフィ（'）以降の文字がコメントとして扱われます。"
   }
