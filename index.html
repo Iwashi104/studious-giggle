@@ -87,11 +87,11 @@
     width: 100%;
     flex-shrink: 0;
     /* cliff.png を繰り返し表示（高さはJSで設定） */
-    background: url('cliff001.png') right center / 300% auto no-repeat;
+    background: url('cliff001.png') right center / 200% auto no-repeat;
   }
   /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: url('cliff001.png') right top / 300% auto no-repeat;
+    background: url('cliff001.png') right top / 200% auto no-repeat;
   }
 
   /* 地面ライン */
@@ -369,7 +369,7 @@ const QUESTIONS = [
 //  SKY_SCROLL_PX : 正解1回あたり背景をスクロールするpx。
 //                  sky.png の高さ ÷ 問題数 が目安。
 // ═══════════════════════════════════════════════
-const CLIFF_PANEL_H  = 1000;   // cliff.png の縦px に合わせる
+const CLIFF_PANEL_H  = 800;   // cliff.png の縦px に合わせる
 const SKY_SCROLL_PX  = 200;   // 背景スクロール量（小さいほどゆっくり）
 const TOTAL_PANELS   = 5;    // 崖パネル枚数（問題数より多めに）
 
