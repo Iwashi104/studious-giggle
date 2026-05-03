@@ -369,7 +369,7 @@ const QUESTIONS = [
 //  SKY_SCROLL_PX : 正解1回あたり背景をスクロールするpx。
 //                  sky.png の高さ ÷ 問題数 が目安。
 // ═══════════════════════════════════════════════
-const CLIFF_PANEL_H  = 800;   // cliff.png の縦px に合わせる
+const CLIFF_PANEL_H  = 400;   // cliff.png の縦px に合わせる
 const SKY_SCROLL_PX  = 200;   // 背景スクロール量（小さいほどゆっくり）
 const TOTAL_PANELS   = 5;    // 崖パネル枚数（問題数より多めに）
 
@@ -411,13 +411,7 @@ function buildCliff() {
   strip.innerHTML = '';
   strip.style.transform = 'translateY(0px)';
 
-  // 頂上パネル
-  const summit = document.createElement('div');
-  summit.className = 'cliff-panel summit';
-  summit.style.height = CLIFF_PANEL_H + 'px';
-  strip.appendChild(summit);
-
-  // 通常パネル：問題数ぶん＋画面を埋めるための余分を追加
+// 通常パネルを先に追加（column-reverseで下に積まれる）
   const extraPanels = Math.ceil(window.innerHeight / CLIFF_PANEL_H) + 1;
   for (let i = 0; i < TOTAL_PANELS + extraPanels; i++) {
     const panel = document.createElement('div');
@@ -425,6 +419,12 @@ function buildCliff() {
     panel.style.height = CLIFF_PANEL_H + 'px';
     strip.appendChild(panel);
   }
+
+  // 頂上パネルを最後に追加（column-reverseで一番上に来る）
+  const summit = document.createElement('div');
+  summit.className = 'cliff-panel summit';
+  summit.style.height = CLIFF_PANEL_H + 'px';
+  strip.appendChild(summit);
 }
 
 // ── 問題表示 ──
@@ -522,7 +522,7 @@ function nextQuestion() {
   skyOffset += SKY_SCROLL_PX;
   document.getElementById('bg-img').style.transform =
     `translateY(${skyOffset}px)`;
-console.log('currentIdx:', currentIdx, 'length:', questions.length);
+
   setTimeout(() => {
     currentIdx++;
     updateUI();
