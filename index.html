@@ -9,19 +9,20 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --cliff-w: 44%;
-    --sky-w: 56%;
-    --panel-h: 280px;
     --accent: #e8c87a;
     --accent-dark: #b8923a;
-    --danger: #c0392b;
-    --success: #27ae60;
     --text-main: #1a1209;
     --text-light: #f5f0e8;
-    --overlay-bg: rgba(15, 10, 5, 0.82);
     --card-bg: rgba(245, 240, 230, 0.97);
     --font-serif: 'Noto Serif JP', serif;
     --font-sans: 'Noto Sans JP', sans-serif;
+
+    /* ── 調整用変数 ──────────────────────────────
+       SKY_IMAGE_HEIGHT_PX : sky.png の実際の縦px
+       CLIFF_STRIP_WIDTH   : 崖画像の横幅（画面幅に対する%）
+       ────────────────────────────────────────── */
+    --sky-image-height: 3000px; /* sky.png の実際の高さに合わせる */
+    --cliff-w: 50%;             /* 崖の横幅 */
   }
 
   html, body {
@@ -32,107 +33,65 @@
     color: var(--text-main);
   }
 
-  /* ── WORLD ── */
-  #world {
+  /* ══════════════════════════════
+     背景レイヤー（sky.png 1枚）
+     下端を基準に上へスクロール
+  ══════════════════════════════ */
+  #bg-layer {
     position: fixed;
     inset: 0;
-    display: flex;
     overflow: hidden;
+    z-index: 0;
+  }
+  #bg-img {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: var(--sky-image-height);
+    object-fit: cover;
+    object-position: center bottom;
+    /* 初期位置：画像の下端を画面下端に揃える */
+    bottom: 0;
+    transform: translateY(0px);
+    transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
-  /* 左：崖 */
-  #cliff-col {
+  /* ══════════════════════════════
+     崖レイヤー（cliff.png 繰り返し・前面）
+     透過PNGを画面左に縦に並べる
+  ══════════════════════════════ */
+  #cliff-layer {
+    position: fixed;
+    left: 0;
+    top: 0;
     width: var(--cliff-w);
     height: 100%;
-    position: relative;
     overflow: hidden;
-    flex-shrink: 0;
+    z-index: 2; /* 背景より前面 */
+    pointer-events: none;
   }
   #cliff-strip {
     position: absolute;
-    left: 0; right: 0;
+    left: 0;
+    right: 0;
     bottom: 0;
+    /* パネルを下から積み上げる */
     display: flex;
     flex-direction: column-reverse;
-    transition: transform 0.9s cubic-bezier(0.4,0,0.2,1);
+    transform: translateY(0px);
+    transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
   .cliff-panel {
     width: 100%;
-    height: var(--panel-h);
     flex-shrink: 0;
-    background: #5a4a3a;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top: 2px solid rgba(255,255,255,0.07);
+    /* cliff.png を繰り返し表示（高さはJSで設定） */
+    background: url('cliff001.png') calc(50% - 250px) center / 300% auto no-repeat;
   }
-  /* ダミー崖テクスチャ（SVGパターン） */
-  .cliff-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        88deg,
-        transparent 0px, transparent 18px,
-        rgba(0,0,0,0.12) 18px, rgba(0,0,0,0.12) 20px
-      ),
-      repeating-linear-gradient(
-        2deg,
-        transparent 0px, transparent 40px,
-        rgba(255,255,255,0.04) 40px, rgba(255,255,255,0.04) 42px
-      );
-  }
+  /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: linear-gradient(180deg, #8aab6e 0%, #6a8a4e 60%, #5a7a3e 100%);
-  }
-  .cliff-panel.summit::before { display: none; }
-
-  /* 右：遠景 */
-  #sky-col {
-    flex: 1;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-  #sky-strip {
-    position: absolute;
-    left: 0; right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column-reverse;
-    transition: transform 1.4s cubic-bezier(0.4,0,0.2,1);
-  }
-  .sky-panel {
-    width: 100%;
-    height: var(--panel-h);
-    flex-shrink: 0;
-    position: relative;
-  }
-  /* ダミー空・遠景グラデーション */
-  .sky-panel:nth-child(1)  { background: linear-gradient(180deg,#1a3a5c 0%,#2a5a8c 100%); }
-  .sky-panel:nth-child(2)  { background: linear-gradient(180deg,#1e4060 0%,#2d6090 100%); }
-  .sky-panel:nth-child(3)  { background: linear-gradient(180deg,#234868 0%,#3268a0 100%); }
-  .sky-panel:nth-child(4)  { background: linear-gradient(180deg,#2a5070 0%,#3870a8 100%); }
-  .sky-panel:nth-child(5)  { background: linear-gradient(180deg,#306080 0%,#4080b8 100%); }
-  .sky-panel:nth-child(6)  { background: linear-gradient(180deg,#3870a0 0%,#4898c8 100%); }
-  .sky-panel:nth-child(7)  { background: linear-gradient(180deg,#4080b0 0%,#58a8d8 100%); }
-  .sky-panel:nth-child(8)  { background: linear-gradient(180deg,#5090c0 0%,#68b8e0 100%); }
-  .sky-panel:nth-child(9)  { background: linear-gradient(180deg,#60a0d0 0%,#78c8e8 100%); }
-  .sky-panel:nth-child(10) { background: linear-gradient(180deg,#70b0dc 0%,#a8d8f0 100%); }
-  /* 頂上パネル */
-  .sky-panel.summit { background: linear-gradient(180deg,#ffeaa0 0%,#ffd060 60%,#ffb030 100%); }
-
-  /* 雲っぽい装飾 */
-  .sky-panel::after {
-    content: '';
-    position: absolute;
-    left: 10%; top: 30%;
-    width: 60%; height: 30%;
-    background: rgba(255,255,255,0.08);
-    border-radius: 50%;
-    filter: blur(12px);
+    background: url('cliff001.png') calc(50% - 250px) top / 300% auto no-repeat;
   }
 
   /* 地面ライン */
@@ -142,7 +101,7 @@
     height: 48px;
     background: linear-gradient(180deg, #3a2a1a 0%, #2a1a0a 100%);
     border-top: 2px solid rgba(255,255,255,0.1);
-    z-index: 5;
+    z-index: 3;
   }
 
   /* 進行バー */
@@ -165,20 +124,21 @@
     position: fixed;
     top: 12px; right: 14px;
     font-size: 12px;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.7);
     font-family: var(--font-sans);
     z-index: 100;
     letter-spacing: 0.05em;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
   }
 
-  /* ── クイズオーバーレイ ── */
+  /* ── クイズカード ── */
   #quiz-overlay {
     position: fixed;
     inset: 0;
     z-index: 50;
     display: flex;
     align-items: flex-end;
-    padding: 0 0 60px 0;
+    padding: 0 0 56px 0;
     pointer-events: none;
   }
   #quiz-card {
@@ -193,7 +153,7 @@
     transform: translateY(0);
     transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s;
   }
-  #quiz-card.hidden {
+  #quiz-card.hidden, #quiz-card.scrolling {
     transform: translateY(100%);
     opacity: 0;
     pointer-events: none;
@@ -249,7 +209,6 @@
   #submit-btn:active { transform: scale(0.98); }
   #submit-btn:disabled { opacity: 0.4; cursor: default; }
 
-  /* 結果表示 */
   #result-area {
     display: none;
     margin-top: 14px;
@@ -259,23 +218,11 @@
     line-height: 1.7;
     font-family: var(--font-sans);
   }
-  #result-area.correct {
-    background: #eafaf0;
-    border: 1.5px solid #a8dbb8;
-    color: #1a5a30;
-  }
-  #result-area.incorrect {
-    background: #fdf0ef;
-    border: 1.5px solid #f0b8b0;
-    color: #7a1a10;
-  }
-  #result-verdict {
-    font-weight: 700;
-    font-size: 15px;
-    margin-bottom: 6px;
-  }
+  #result-area.correct  { background: #eafaf0; border: 1.5px solid #a8dbb8; color: #1a5a30; }
+  #result-area.incorrect{ background: #fdf0ef; border: 1.5px solid #f0b8b0; color: #7a1a10; }
+  #result-verdict { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
   #correct-answer { margin-bottom: 6px; }
-  #explanation-text { color: inherit; opacity: 0.85; }
+  #explanation-text { opacity: 0.85; }
 
   #next-btn {
     width: 100%;
@@ -295,7 +242,7 @@
   }
   #next-btn:active { transform: scale(0.98); }
 
-  /* ── 頂上画面 ── */
+  /* 頂上画面 */
   #summit-screen {
     position: fixed;
     inset: 0;
@@ -318,9 +265,10 @@
   }
   #summit-sub {
     font-size: 15px;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.85);
     margin-bottom: 32px;
-    line-height: 1.7;
+    line-height: 1.8;
+    white-space: pre-line;
   }
   #restart-btn {
     padding: 14px 40px;
@@ -334,23 +282,21 @@
     cursor: pointer;
     letter-spacing: 0.05em;
   }
-
-  /* スクロールアニメ中の非表示 */
-  #quiz-card.scrolling {
-    transform: translateY(100%);
-    opacity: 0;
-    pointer-events: none;
-  }
 </style>
 </head>
 <body>
 
-<div id="world">
-  <div id="cliff-col"><div id="cliff-strip"></div></div>
-  <div id="sky-col"><div id="sky-strip"></div></div>
+<!-- 背景：sky.png 1枚 -->
+<div id="bg-layer">
+  <img id="bg-img" src="back001.png" alt="">
 </div>
-<div id="ground"></div>
 
+<!-- 崖：透過PNGを前面に重ねて繰り返し -->
+<div id="cliff-layer">
+  <div id="cliff-strip"></div>
+</div>
+
+<div id="ground"></div>
 <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
 <div id="counter"></div>
 
@@ -358,7 +304,8 @@
   <div id="quiz-card">
     <div class="card-label">問題</div>
     <div id="question-text"></div>
-    <input type="text" id="answer-input" placeholder="答えを入力してください" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <input type="text" id="answer-input" placeholder="答えを入力してください"
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <button id="submit-btn" onclick="checkAnswer()">答え合わせ</button>
     <div id="result-area">
       <div id="result-verdict"></div>
@@ -371,12 +318,16 @@
 
 <div id="summit-screen">
   <div id="summit-title">🏔 頂上到達！</div>
-  <div id="summit-sub">全問正解！<br>見事、山頂に辿り着きました。</div>
+  <div id="summit-sub"></div>
   <button id="restart-btn" onclick="restartQuiz()">もう一度挑戦する</button>
 </div>
 
 <script>
-// ── 問題データ（JSONで差し替え可能な構造） ──
+// ═══════════════════════════════════════════════
+//  問題データ
+//  a  : 正解（完全一致判定）
+//  alt: 別解（あれば）
+// ═══════════════════════════════════════════════
 const QUESTIONS = [
   {
     q: "VBAでセルA1の値を取得するコードを書いてください。",
@@ -388,7 +339,7 @@ const QUESTIONS = [
     q: "VBAでメッセージボックスに「Hello」と表示するコードを書いてください。",
     a: "MsgBox \"Hello\"",
     alt: ["MsgBox(\"Hello\")"],
-    explanation: "MsgBox 関数はダイアログボックスにメッセージを表示します。引数に表示したい文字列を渡します。"
+    explanation: "MsgBox 関数はダイアログボックスにメッセージを表示します。"
   },
   {
     q: "変数 x を整数型で宣言するコードを書いてください。",
@@ -410,26 +361,38 @@ const QUESTIONS = [
   }
 ];
 
-// ── 状態 ──
-let questions = [];
-let currentIdx = 0;
-let correctCount = 0;
-let isAnimating = false;
-let cliffOffset = 0;
-let skyOffset = 0;
+// ═══════════════════════════════════════════════
+//  設定値
+//  CLIFF_PANEL_H : 崖パネル1枚の高さ(px)。
+//                  cliff.png の縦サイズに合わせると
+//                  ちょうど1枚ぶん表示される。
+//  SKY_SCROLL_PX : 正解1回あたり背景をスクロールするpx。
+//                  sky.png の高さ ÷ 問題数 が目安。
+// ═══════════════════════════════════════════════
+const CLIFF_PANEL_H  = 1000;   // cliff.png の縦px に合わせる
+const SKY_SCROLL_PX  = 200;   // 背景スクロール量（小さいほどゆっくり）
+const TOTAL_PANELS   = 5;    // 崖パネル枚数（問題数より多めに）
 
-const CLIFF_STEP = 280;
-const SKY_STEP = 160;
-const TOTAL_PANELS = 12;
+// ── 状態 ──
+let questions    = [];
+let currentIdx   = 0;
+let correctCount = 0;
+let isAnimating  = false;
+let cliffOffset  = 0;   // 崖ストリップの累積移動量(px)
+let skyOffset    = 0;   // 背景の累積移動量(px)
 
 // ── 初期化 ──
 function init() {
-  questions = shuffle([...QUESTIONS]);
-  currentIdx = 0;
+  questions    = shuffle([...QUESTIONS]);
+  currentIdx   = 0;
   correctCount = 0;
-  cliffOffset = 0;
-  skyOffset = 0;
-  buildWorld();
+  cliffOffset  = 0;
+  skyOffset    = 0;
+
+  // 背景リセット
+  document.getElementById('bg-img').style.transform = 'translateY(0px)';
+
+  buildCliff();
   showQuestion();
   updateUI();
 }
@@ -442,28 +405,19 @@ function shuffle(arr) {
   return arr;
 }
 
-function buildWorld() {
-  const cliffStrip = document.getElementById('cliff-strip');
-  const skyStrip = document.getElementById('sky-strip');
-  cliffStrip.innerHTML = '';
-  skyStrip.innerHTML = '';
+// 崖パネルを組み立てる
+function buildCliff() {
+  const strip = document.getElementById('cliff-strip');
+  strip.innerHTML = '';
+  strip.style.transform = 'translateY(0px)';
 
-  // 頂上パネル + 通常パネル × TOTAL_PANELS
+  // 通常パネル + 頂上パネル（一番上）
   for (let i = 0; i <= TOTAL_PANELS; i++) {
-    const cp = document.createElement('div');
-    cp.className = 'cliff-panel' + (i === TOTAL_PANELS ? ' summit' : '');
-    cp.style.height = CLIFF_STEP + 'px';
-    if (i === TOTAL_PANELS) cp.innerHTML = '<span style="color:#fff;font-size:24px">🏔</span>';
-    cliffStrip.appendChild(cp);
-
-    const sp = document.createElement('div');
-    sp.className = 'sky-panel' + (i === TOTAL_PANELS ? ' summit' : '');
-    sp.style.height = CLIFF_STEP + 'px';
-    skyStrip.appendChild(sp);
+    const panel = document.createElement('div');
+    panel.className = 'cliff-panel' + (i === TOTAL_PANELS ? ' summit' : '');
+    panel.style.height = CLIFF_PANEL_H + 'px';
+    strip.appendChild(panel);
   }
-
-  document.getElementById('cliff-strip').style.transform = 'translateY(0)';
-  document.getElementById('sky-strip').style.transform = 'translateY(0)';
 }
 
 // ── 問題表示 ──
@@ -472,12 +426,14 @@ function showQuestion() {
   document.getElementById('question-text').textContent = q.q;
   document.getElementById('answer-input').value = '';
   document.getElementById('answer-input').disabled = false;
+  document.getElementById('submit-btn').textContent = '答え合わせ';
+  document.getElementById('submit-btn').onclick = checkAnswer;
   document.getElementById('submit-btn').disabled = false;
   document.getElementById('result-area').style.display = 'none';
   document.getElementById('result-area').className = '';
   document.getElementById('next-btn').style.display = 'none';
   document.getElementById('quiz-card').classList.remove('hidden', 'scrolling');
-  setTimeout(() => document.getElementById('answer-input').focus(), 100);
+  setTimeout(() => document.getElementById('answer-input').focus(), 120);
 }
 
 // ── 採点 ──
@@ -486,44 +442,45 @@ function normalize(s) {
 }
 
 function checkAnswer() {
-  const input = document.getElementById('answer-input').value;
-  const q = questions[currentIdx];
+  const input  = document.getElementById('answer-input').value;
+  const q      = questions[currentIdx];
   const userAns = normalize(input);
   const correct = normalize(q.a);
-  const alts = (q.alt || []).map(normalize);
-
+  const alts    = (q.alt || []).map(normalize);
   const isCorrect = userAns === correct || alts.includes(userAns);
 
   document.getElementById('answer-input').disabled = true;
-  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('submit-btn').disabled   = true;
 
   const resultArea = document.getElementById('result-area');
   resultArea.style.display = 'block';
-  resultArea.className = isCorrect ? 'correct' : 'incorrect';
-  document.getElementById('result-verdict').textContent = isCorrect ? '✓ 正解！' : '✗ 不正解';
-  document.getElementById('correct-answer').textContent = isCorrect ? '' : '正解：' + q.a;
+  resultArea.className     = isCorrect ? 'correct' : 'incorrect';
+  document.getElementById('result-verdict').textContent =
+    isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('correct-answer').textContent =
+    isCorrect ? '' : '正解：' + q.a;
   document.getElementById('explanation-text').textContent = q.explanation;
 
   if (isCorrect) {
     correctCount++;
-    document.getElementById('next-btn').style.display = 'block';
-    document.getElementById('next-btn').textContent =
-      currentIdx + 1 >= questions.length ? '頂上へ！ ↑' : '次の問題へ登る ↑';
+    const isLast = currentIdx + 1 >= questions.length;
+    document.getElementById('next-btn').style.display  = 'block';
+    document.getElementById('next-btn').textContent    =
+      isLast ? '頂上へ！ ↑' : '次の問題へ登る ↑';
   } else {
-    // 不正解：再挑戦ボタン
-    document.getElementById('submit-btn').textContent = 'もう一度挑戦する';
-    document.getElementById('submit-btn').disabled = false;
-    document.getElementById('submit-btn').onclick = retryQuestion;
+    document.getElementById('submit-btn').textContent  = 'もう一度挑戦する';
+    document.getElementById('submit-btn').disabled     = false;
+    document.getElementById('submit-btn').onclick      = retryQuestion;
   }
 }
 
 function retryQuestion() {
-  document.getElementById('answer-input').value = '';
+  document.getElementById('answer-input').value   = '';
   document.getElementById('answer-input').disabled = false;
   document.getElementById('result-area').style.display = 'none';
   document.getElementById('submit-btn').textContent = '答え合わせ';
-  document.getElementById('submit-btn').onclick = checkAnswer;
-  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').onclick     = checkAnswer;
+  document.getElementById('submit-btn').disabled    = false;
   setTimeout(() => document.getElementById('answer-input').focus(), 100);
 }
 
@@ -533,14 +490,17 @@ function nextQuestion() {
   isAnimating = true;
 
   // カードを隠す
-  const card = document.getElementById('quiz-card');
-  card.classList.add('scrolling');
+  document.getElementById('quiz-card').classList.add('scrolling');
 
-  // パララックススクロール
-  cliffOffset += CLIFF_STEP;
-  skyOffset += SKY_STEP;
-  document.getElementById('cliff-strip').style.transform = `translateY(${cliffOffset}px)`;
-  document.getElementById('sky-strip').style.transform = `translateY(${skyOffset}px)`;
+  // 崖：下から上へスクロール（translateY を増やす＝上へ）
+  cliffOffset += CLIFF_PANEL_H;
+  document.getElementById('cliff-strip').style.transform =
+    `translateY(${cliffOffset}px)`;
+
+  // 背景：translateY をマイナス方向に動かす＝上へスクロール
+  skyOffset += SKY_SCROLL_PX;
+  document.getElementById('bg-img').style.transform =
+    `translateY(${skyOffset}px)`;
 
   setTimeout(() => {
     currentIdx++;
@@ -551,15 +511,15 @@ function nextQuestion() {
       showQuestion();
     }
     isAnimating = false;
-  }, 1000);
+  }, 1100);
 }
 
 function updateUI() {
   const total = questions.length;
-  const done = correctCount;
-  const pct = Math.round((done / total) * 100);
+  const pct   = Math.round((correctCount / total) * 100);
   document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('counter').textContent = `${Math.min(currentIdx + 1, total)} / ${total}`;
+  document.getElementById('counter').textContent =
+    `${Math.min(currentIdx + 1, total)} / ${total}`;
 }
 
 function showSummit() {
