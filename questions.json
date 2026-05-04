@@ -114,7 +114,7 @@
     "explanation": "Subプロシージャは処理をまとめたものですが値を返しません。値を返す場合はFunctionプロシージャを使います。"
   },
   {
-    "q": "VBAで引数を2つ受け取り、その合計を返すFunctionプロシージャの1行目を書いてください。（引数名はa, b、型はLong、戻り値もLong）",
+    "q": "VBAでプロシージャ名「Sum」、引数名はa, b（型はLong）、戻り値もLongのFunctionプロシージャの1行目を書いてください。",
     "a": "Function Sum(a As Long, b As Long) As Long",
     "alt": [],
     "explanation": "Function プロシージャ名(引数リスト) As 戻り値型 の形で定義します。戻り値はプロシージャ名に代入することで返します。"
@@ -178,5 +178,185 @@
     "a": "Range(\"A1\").AutoFilter",
     "alt": [],
     "explanation": "AutoFilterメソッドでオートフィルタの設定・解除を切り替えます。Field引数やCriteria1引数を追加することで特定列の絞り込み条件も指定できます。"
+  },
+  {
+    "q": "VBAで日付型の変数を宣言するときに使うデータ型名は何ですか？",
+    "a": "Date",
+    "alt": [],
+    "explanation": "Date型は日付と時刻を格納します。例：Dim d As Date。日付リテラルは#2024/1/1#のように#で囲みます。"
+  },
+  {
+    "q": "VBAで小数点を含む数値を扱うデータ型のうち、最も精度が高いものは何ですか？",
+    "a": "Double",
+    "alt": [],
+    "explanation": "Double型は倍精度浮動小数点数で、約15桁の有効数字を持ちます。Single型より精度が高く、科学計算などに使われます。"
+  },
+  {
+    "q": "VBAで通貨計算に適した、小数点以下4桁までの固定小数点型は何ですか？",
+    "a": "Currency",
+    "alt": [],
+    "explanation": "Currency型は金融計算向けの固定小数点数型で、浮動小数点型のような丸め誤差が発生しません。"
+  },
+  {
+    "q": "VBAでセルA1の数式を取得するプロパティは何ですか？",
+    "a": "Range(\"A1\").Formula",
+    "alt": [],
+    "explanation": "FormulaプロパティはセルのExcel数式を文字列で返します。数式がない場合は値をそのまま返します。FormulaR1C1プロパティではR1C1形式で取得できます。"
+  },
+  {
+    "q": "VBAでセルA1の表示形式を「yyyy/mm/dd」に設定するコードを書いてください。",
+    "a": "Range(\"A1\").NumberFormat = \"yyyy/mm/dd\"",
+    "alt": [],
+    "explanation": "NumberFormatプロパティにExcelの書式文字列を設定することでセルの表示形式を変更できます。"
+  },
+  {
+    "q": "VBAでA1:C5の範囲の背景色を黄色にするコードを書いてください。",
+    "a": "Range(\"A1:C5\").Interior.Color = RGB(255, 255, 0)",
+    "alt": ["Range(\"A1:C5\").Interior.Color = vbYellow"],
+    "explanation": "Interior.ColorプロパティでセルやRange全体の背景色を設定します。RGB関数または色定数が使えます。"
+  },
+  {
+    "q": "VBAでセルの結合を解除するメソッドは何ですか？",
+    "a": "Range(\"A1:C1\").UnMerge",
+    "alt": [],
+    "explanation": "UnMergeメソッドで結合されたセルを解除します。結合するにはMergeメソッドを使います。"
+  },
+  {
+    "q": "VBAでアクティブセルのある行番号を取得するコードを書いてください。",
+    "a": "ActiveCell.Row",
+    "alt": [],
+    "explanation": "ActiveCellは現在アクティブなセルを参照します。RowプロパティとColumnプロパティでそれぞれ行番号・列番号を取得できます。"
+  },
+  {
+    "q": "VBAで1行目全体を選択するコードを書いてください。",
+    "a": "Rows(1).Select",
+    "alt": [],
+    "explanation": "Rows(行番号)で行全体を参照します。Columns(列番号)で列全体を参照できます。"
+  },
+  {
+    "q": "VBAでワークシートの名前を「集計」に変更するコードを書いてください。（対象はアクティブシート）",
+    "a": "ActiveSheet.Name = \"集計\"",
+    "alt": [],
+    "explanation": "WorksheetオブジェクトのNameプロパティに文字列を代入することでシート名を変更できます。"
+  },
+  {
+    "q": "VBAでブックを上書き保存するコードを書いてください。",
+    "a": "ThisWorkbook.Save",
+    "alt": ["ActiveWorkbook.Save"],
+    "explanation": "Saveメソッドはブックをそのファイルパスに上書き保存します。新規ブックや別名保存にはSaveAsメソッドを使います。"
+  },
+  {
+    "q": "VBAでブックを閉じるメソッドは何ですか？",
+    "a": "Workbooks.Close",
+    "alt": ["ThisWorkbook.Close", "ActiveWorkbook.Close"],
+    "explanation": "CloseメソッドはWorkbookオブジェクトを閉じます。SaveChanges引数にTrue/Falseを指定して保存有無を制御できます。"
+  },
+  {
+    "q": "VBAで特定のブックがすでに開いているか確認したい場合、どのコレクションを使いますか？",
+    "a": "Workbooks",
+    "alt": [],
+    "explanation": "Workbooksコレクションは現在開いているすべてのブックを参照します。For Eachでループして名前を確認する方法がよく使われます。"
+  },
+  {
+    "q": "VBAでFor Each～Nextを使い、コレクション内の全要素を順番に処理するとき、要素を格納する変数の型は何にする必要がありますか？",
+    "a": "Object",
+    "alt": ["Variant"],
+    "explanation": "For Each の変数はObjectまたはVariant型である必要があります。ただし具体的なオブジェクト型（WorksheetやRangeなど）を指定することでより明示的に書けます。"
+  },
+  {
+    "q": "VBAでDo Loopを最低1回は実行してから条件を判定する構文を書いてください。（条件式はx < 10とします）",
+    "a": "Do\nLoop While x < 10",
+    "alt": [],
+    "explanation": "Do ～ Loop While の形ではループ本体を必ず1回実行してから条件を評価します。Do While ～ Loop では条件が最初からFalseだと1回も実行されません。"
+  },
+  {
+    "q": "VBAでFor i = 1 To 10のループで、iを2ずつ増やすにはどう書きますか？",
+    "a": "For i = 1 To 10 Step 2",
+    "alt": [],
+    "explanation": "Step キーワードでループの増分を指定します。負の値を指定すると逆順のループになります。例：For i = 10 To 1 Step -1"
+  },
+  {
+    "q": "VBAでプロシージャの途中で処理を終了して呼び出し元に戻るステートメントは何ですか？",
+    "a": "Exit Sub",
+    "alt": [],
+    "explanation": "Exit Sub はSubプロシージャを途中で終了します。Functionプロシージャの場合はExit Functionを使います。"
+  },
+  {
+    "q": "VBAで引数を参照渡しで受け取ることを明示するキーワードは何ですか？",
+    "a": "ByRef",
+    "alt": [],
+    "explanation": "ByRefは引数を参照渡しにし、呼び出し元の変数が変更されます。値渡しにするにはByValを使います。VBAのデフォルトはByRefです。"
+  },
+  {
+    "q": "VBAで引数を値渡しにするキーワードは何ですか？",
+    "a": "ByVal",
+    "alt": [],
+    "explanation": "ByValを指定すると引数のコピーが渡されるため、プロシージャ内で変更しても呼び出し元の変数には影響しません。"
+  },
+  {
+    "q": "VBAで動的配列を宣言するコードを書いてください。（変数名はarr、型はString）",
+    "a": "Dim arr() As String",
+    "alt": [],
+    "explanation": "括弧内にサイズを指定しないことで動的配列を宣言します。後からReDimステートメントでサイズを決定します。"
+  },
+  {
+    "q": "VBAで動的配列のサイズを5に変更し、既存のデータを保持するコードを書いてください。（配列名はarr）",
+    "a": "ReDim Preserve arr(4)",
+    "alt": [],
+    "explanation": "ReDim Preserve は配列のサイズを変更しつつ既存のデータを保持します。Preserveを省略するとデータが消去されます。"
+  },
+  {
+    "q": "VBAでエラー番号を取得するオブジェクトと、そのNumberプロパティの書き方は何ですか？",
+    "a": "Err.Number",
+    "alt": [],
+    "explanation": "ErrオブジェクトはVBAのエラー情報を保持します。Err.Numberでエラー番号、Err.Descriptionでエラーの説明を取得できます。"
+  },
+  {
+    "q": "VBAでエラーハンドラ内からエラーが発生した行に処理を戻すステートメントは何ですか？",
+    "a": "Resume",
+    "alt": [],
+    "explanation": "Resumeはエラーが発生した行に戻って再実行します。Resume Nextはエラーの次の行から再開します。Resume ラベル名で指定行に戻ることもできます。"
+  },
+  {
+    "q": "VBAで文字列を連結する演算子は何ですか？",
+    "a": "&",
+    "alt": [],
+    "explanation": "& 演算子は文字列を連結します。例：\"Hello\" & \" \" & \"World\" は \"Hello World\" になります。+ 演算子でも連結できますが、数値と混在するとエラーになる場合があるため & を使うのが安全です。"
+  },
+  {
+    "q": "VBAで文字列の長さ（文字数）を返す関数は何ですか？",
+    "a": "Len",
+    "alt": [],
+    "explanation": "Len(文字列)は文字列の文字数を返します。例：Len(\"ABC\") は 3 を返します。"
+  },
+  {
+    "q": "VBAで文字列の左側からn文字を取り出す関数は何ですか？",
+    "a": "Left",
+    "alt": [],
+    "explanation": "Left(文字列, 文字数)で左側から指定した文字数を取り出します。右側からはRight関数、中間部分はMid関数を使います。"
+  },
+  {
+    "q": "VBAで文字列中の特定の文字列が最初に現れる位置を返す関数は何ですか？",
+    "a": "InStr",
+    "alt": [],
+    "explanation": "InStr(文字列, 検索文字列)は検索文字列が最初に見つかった位置を返します。見つからない場合は0を返します。"
+  },
+  {
+    "q": "VBAで数値を文字列に変換する関数は何ですか？",
+    "a": "CStr",
+    "alt": [],
+    "explanation": "CStr(値)は値を文字列型に変換します。逆に文字列を数値に変換するにはCLng、CDbl、CInt等の型変換関数を使います。"
+  },
+  {
+    "q": "VBAで現在の日付を返す関数は何ですか？",
+    "a": "Date",
+    "alt": [],
+    "explanation": "Date関数は今日の日付をDate型で返します。現在の時刻はTime関数、日付と時刻を合わせて取得するにはNow関数を使います。"
+  },
+  {
+    "q": "VBAでメッセージボックスに「はい」「いいえ」ボタンを表示し、ユーザーの選択を取得するコードを書いてください。",
+    "a": "MsgBox \"確認\", vbYesNo",
+    "alt": [],
+    "explanation": "MsgBoxの第2引数にvbYesNoを指定すると「はい」「いいえ」ボタンが表示されます。戻り値はvbYes(6)またはvbNo(7)で判定します。"
   }
 ]
