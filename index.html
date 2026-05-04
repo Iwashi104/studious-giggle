@@ -87,11 +87,11 @@
     width: 100%;
     flex-shrink: 0;
     /* cliff.png を繰り返し表示（高さはJSで設定） */
-    background: url('cliff001.png') center top / 100% auto no-repeat;
+    background: url('cliff001.png') center center / 200% auto no-repeat;
   }
   /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: url('cliff001.png') center top / 100% auto no-repeat;
+    background: url('cliff001.png') center top / 200% auto no-repeat;
   }
 
   /* 地面ライン */
@@ -464,7 +464,10 @@ function nextQuestion() {
   document.getElementById('quiz-card').classList.add('scrolling');
 
   // 崖：下から上へスクロール（translateY を増やす＝上へ）
-  cliffOffset += CLIFF_PANEL_H;
+  const strip = document.getElementById('cliff-strip');
+  const totalScroll = strip.scrollHeight - window.innerHeight;
+  const stepScroll = Math.ceil(totalScroll / questions.length);
+  cliffOffset += stepScroll;
   document.getElementById('cliff-strip').style.transform =
     `translateY(${cliffOffset}px)`;
 
