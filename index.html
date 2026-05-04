@@ -22,7 +22,7 @@
        CLIFF_STRIP_WIDTH   : 崖画像の横幅（画面幅に対する%）
        ────────────────────────────────────────── */
     --sky-image-height: 3000px; /* sky.png の実際の高さに合わせる */
-    --cliff-w: 100%;             /* 崖の横幅 */
+    --cliff-w: 50%;             /* 崖の横幅 */
   }
 
   html, body {
@@ -87,11 +87,11 @@
     width: 100%;
     flex-shrink: 0;
     /* cliff.png を繰り返し表示（高さはJSで設定） */
-    background: url('cliff001.png') right center / 100% auto no-repeat;
+    background: url('cliff001.png') center center / 150% auto no-repeat;
   }
   /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: url('cliff_summit.png') right top / 100% auto no-repeat;
+    background: url('cliff001.png') center top  / 150% auto no-repeat;
   }
 
   /* 地面ライン */
@@ -331,32 +331,32 @@
 const QUESTIONS = [
   {
     q: "VBAでセルA1の値を取得するコードを書いてください。",
-    a: "1",
-    alt: ["Cells(1,1).Value"],
+    a: "Range(\"A1\").Value",
+    alt: ["1"],
     explanation: "Range(\"A1\").Value または Cells(1,1).Value でセルA1の値を取得できます。"
   },
   {
     q: "VBAでメッセージボックスに「Hello」と表示するコードを書いてください。",
-    a: "1",
-    alt: ["MsgBox(\"Hello\")"],
+    a: "MsgBox \"Hello\"",
+    alt: ["1"],
     explanation: "MsgBox 関数はダイアログボックスにメッセージを表示します。"
   },
   {
     q: "変数 x を整数型で宣言するコードを書いてください。",
-    a: "1",
-    alt: [],
+    a: "Dim x As Integer",
+    alt: ["1"],
     explanation: "Dim 変数名 As データ型 の形式で変数を宣言します。整数型は Integer です。"
   },
   {
     q: "VBAでFor i = 1 To 10のループを終了するキーワードは何ですか？",
-    a: "1",
-    alt: ["Next"],
+    a: "Next i",
+    alt: ["1"],
     explanation: "For～NextループはNext（または Next 変数名）でループブロックを閉じます。"
   },
   {
     q: "VBAでコメントを書くときに行頭に使う記号は何ですか？",
-    a: "1",
-    alt: ["' （アポストロフィ）", "アポストロフィ"],
+    a: "'",
+    alt: ["1"],
     explanation: "VBAではアポストロフィ（'）以降の文字がコメントとして扱われます。"
   }
 ];
@@ -369,7 +369,7 @@ const QUESTIONS = [
 //  SKY_SCROLL_PX : 正解1回あたり背景をスクロールするpx。
 //                  sky.png の高さ ÷ 問題数 が目安。
 // ═══════════════════════════════════════════════
-const CLIFF_PANEL_H  = 400;   // cliff.png の縦px に合わせる
+const CLIFF_PANEL_H  = 500;   // cliff.png の縦px に合わせる
 const SKY_SCROLL_PX  = 200;   // 背景スクロール量（小さいほどゆっくり）
 const TOTAL_PANELS   = 5;    // 崖パネル枚数（問題数より多めに）
 
@@ -411,7 +411,7 @@ function buildCliff() {
   strip.innerHTML = '';
   strip.style.transform = 'translateY(0px)';
 
-// 通常パネルを先に追加（column-reverseで下に積まれる）
+  // 通常パネルを先に追加（column-reverseで下に積まれる）
   const extraPanels = Math.ceil(window.innerHeight / CLIFF_PANEL_H) + 1;
   for (let i = 0; i < TOTAL_PANELS + extraPanels; i++) {
     const panel = document.createElement('div');
@@ -470,7 +470,7 @@ function checkAnswer() {
 
   if (isCorrect) {
     correctCount++;
-    const isLast = currentIdx >= questions.length - 1;
+    const isLast = currentIdx + 1 >= questions.length;
     document.getElementById('next-btn').style.display  = 'block';
     document.getElementById('next-btn').textContent    =
       isLast ? '頂上へ！ ↑' : '次の問題へ登る ↑';
@@ -494,27 +494,16 @@ function retryQuestion() {
 // ── 次の問題・スクロール ──
 function nextQuestion() {
   if (isAnimating) return;
-
-  // 最後の問題なら即座に頂上へ
-  if (currentIdx >= questions.length - 1) {
-    document.getElementById('quiz-card').classList.add('scrolling');
-    cliffOffset += CLIFF_PANEL_H;
-    document.getElementById('cliff-strip').style.transform =
-      `translateY(${cliffOffset}px)`;
-    skyOffset += SKY_SCROLL_PX;
-    document.getElementById('bg-img').style.transform =
-      `translateY(${skyOffset}px)`;
-    setTimeout(() => { showSummit(); }, 1100);
-    return;
-  }
-
   isAnimating = true;
 
   // カードを隠す
   document.getElementById('quiz-card').classList.add('scrolling');
 
-  // 崖：下から上へスクロール（translateY を増やす＝上へ）
-  cliffOffset += CLIFF_PANEL_H;
+  // 必要な総スクロール量 ÷ 問題数 を1回分のスクロール量にする
+  const strip = document.getElementById('cliff-strip');
+  const totalScroll = strip.scrollHeight - window.innerHeight;
+  const stepScroll = Math.ceil(totalScroll / questions.length);
+  cliffOffset += stepScroll;
   document.getElementById('cliff-strip').style.transform =
     `translateY(${cliffOffset}px)`;
 
