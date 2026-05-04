@@ -87,11 +87,11 @@
     width: 100%;
     flex-shrink: 0;
     /* cliff.png を繰り返し表示（高さはJSで設定） */
-    background: url('cliff001.png') center center / 200% auto no-repeat;
+    background: url('cliff001.png') center top / 100% auto no-repeat;
   }
   /* 頂上パネルだけ別画像 */
   .cliff-panel.summit {
-    background: url('cliff001.png') center top  / 200% auto no-repeat;
+    background: url('cliff001.png') center top / 100% auto no-repeat;
   }
 
   /* 地面ライン */
@@ -324,44 +324,6 @@
 
 <script>
 // ═══════════════════════════════════════════════
-//  問題データ
-//  a  : 正解（完全一致判定）
-//  alt: 別解（あれば）
-// ═══════════════════════════════════════════════
-const QUESTIONS = [
-  {
-    q: "VBAでセルA1の値を取得するコードを書いてください。",
-    a: "Range(\"A1\").Value",
-    alt: ["1"],
-    explanation: "Range(\"A1\").Value または Cells(1,1).Value でセルA1の値を取得できます。"
-  },
-  {
-    q: "VBAでメッセージボックスに「Hello」と表示するコードを書いてください。",
-    a: "MsgBox \"Hello\"",
-    alt: ["1"],
-    explanation: "MsgBox 関数はダイアログボックスにメッセージを表示します。"
-  },
-  {
-    q: "変数 x を整数型で宣言するコードを書いてください。",
-    a: "Dim x As Integer",
-    alt: ["1"],
-    explanation: "Dim 変数名 As データ型 の形式で変数を宣言します。整数型は Integer です。"
-  },
-  {
-    q: "VBAでFor i = 1 To 10のループを終了するキーワードは何ですか？",
-    a: "Next i",
-    alt: ["1"],
-    explanation: "For～NextループはNext（または Next 変数名）でループブロックを閉じます。"
-  },
-  {
-    q: "VBAでコメントを書くときに行頭に使う記号は何ですか？",
-    a: "'",
-    alt: ["1"],
-    explanation: "VBAではアポストロフィ（'）以降の文字がコメントとして扱われます。"
-  }
-];
-
-// ═══════════════════════════════════════════════
 //  設定値
 //  CLIFF_PANEL_H : 崖パネル1枚の高さ(px)。
 //                  cliff.png の縦サイズに合わせると
@@ -369,9 +331,9 @@ const QUESTIONS = [
 //  SKY_SCROLL_PX : 正解1回あたり背景をスクロールするpx。
 //                  sky.png の高さ ÷ 問題数 が目安。
 // ═══════════════════════════════════════════════
-const CLIFF_PANEL_H  = 500;   // cliff.png の縦px に合わせる
+const CLIFF_PANEL_H  = 400;   // cliff.png の縦px に合わせる
 const SKY_SCROLL_PX  = 200;   // 背景スクロール量（小さいほどゆっくり）
-const TOTAL_PANELS   = 5;    // 崖パネル枚数（問題数より多めに）
+const TOTAL_PANELS   = 14;    // 崖パネル枚数（問題数より多めに）
 
 // ── 状態 ──
 let questions    = [];
@@ -381,20 +343,29 @@ let isAnimating  = false;
 let cliffOffset  = 0;   // 崖ストリップの累積移動量(px)
 let skyOffset    = 0;   // 背景の累積移動量(px)
 
-// ── 初期化 ──
+// ── 初期化（restartQuiz から呼ぶ用） ──
 function init() {
-  questions    = shuffle([...QUESTIONS]);
-  currentIdx   = 0;
-  correctCount = 0;
-  cliffOffset  = 0;
-  skyOffset    = 0;
-
-  // 背景リセット
-  document.getElementById('bg-img').style.transform = 'translateY(0px)';
-
-  buildCliff();
-  showQuestion();
-  updateUI();
+  fetch('questions.json')
+    .then(res => {
+      if (!res.ok) throw new Error('questions.json が見つかりません');
+      return res.json();
+    })
+    .then(data => {
+      questions    = shuffle(data);
+      currentIdx   = 0;
+      correctCount = 0;
+      cliffOffset  = 0;
+      skyOffset    = 0;
+      document.getElementById('bg-img').style.transform = 'translateY(0px)';
+      buildCliff();
+      showQuestion();
+      updateUI();
+    })
+    .catch(err => {
+      document.getElementById('question-text').textContent =
+        '問題データの読み込みに失敗しました。questions.json を確認してください。';
+      console.error(err);
+    });
 }
 
 function shuffle(arr) {
@@ -411,20 +382,13 @@ function buildCliff() {
   strip.innerHTML = '';
   strip.style.transform = 'translateY(0px)';
 
-  // 通常パネルを先に追加（column-reverseで下に積まれる）
-  const extraPanels = Math.ceil(window.innerHeight / CLIFF_PANEL_H) + 1;
-  for (let i = 0; i < TOTAL_PANELS + extraPanels; i++) {
+  // 通常パネル + 頂上パネル（一番上）
+  for (let i = 0; i <= TOTAL_PANELS; i++) {
     const panel = document.createElement('div');
-    panel.className = 'cliff-panel';
+    panel.className = 'cliff-panel' + (i === TOTAL_PANELS ? ' summit' : '');
     panel.style.height = CLIFF_PANEL_H + 'px';
     strip.appendChild(panel);
   }
-
-  // 頂上パネルを最後に追加（column-reverseで一番上に来る）
-  const summit = document.createElement('div');
-  summit.className = 'cliff-panel summit';
-  summit.style.height = CLIFF_PANEL_H + 'px';
-  strip.appendChild(summit);
 }
 
 // ── 問題表示 ──
@@ -499,11 +463,8 @@ function nextQuestion() {
   // カードを隠す
   document.getElementById('quiz-card').classList.add('scrolling');
 
-  // 必要な総スクロール量 ÷ 問題数 を1回分のスクロール量にする
-  const strip = document.getElementById('cliff-strip');
-  const totalScroll = strip.scrollHeight - window.innerHeight;
-  const stepScroll = Math.ceil(totalScroll / questions.length);
-  cliffOffset += stepScroll;
+  // 崖：下から上へスクロール（translateY を増やす＝上へ）
+  cliffOffset += CLIFF_PANEL_H;
   document.getElementById('cliff-strip').style.transform =
     `translateY(${cliffOffset}px)`;
 
@@ -551,7 +512,30 @@ document.getElementById('answer-input').addEventListener('keydown', e => {
   }
 });
 
-init();
+// ── 問題データをJSONから読み込んで起動 ──
+fetch('questions.json')
+  .then(res => {
+    if (!res.ok) throw new Error('questions.json が見つかりません');
+    return res.json();
+  })
+  .then(data => {
+    // JSONデータを questions にセットして初期化
+    questions    = shuffle(data);
+    currentIdx   = 0;
+    correctCount = 0;
+    cliffOffset  = 0;
+    skyOffset    = 0;
+    document.getElementById('bg-img').style.transform = 'translateY(0px)';
+    buildCliff();
+    showQuestion();
+    updateUI();
+  })
+  .catch(err => {
+    // 読み込み失敗時はカードにエラーを表示
+    document.getElementById('question-text').textContent =
+      '問題データの読み込みに失敗しました。questions.json を確認してください。';
+    console.error(err);
+  });
 </script>
 </body>
 </html>

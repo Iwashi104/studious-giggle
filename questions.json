@@ -1,0 +1,32 @@
+[
+  {
+    "q": "VBAでセルA1の値を取得するコードを書いてください。",
+    "a": "Range(\"A1\").Value",
+    "alt": ["Cells(1,1).Value"],
+    "explanation": "Range(\"A1\").Value または Cells(1,1).Value でセルA1の値を取得できます。"
+  },
+  {
+    "q": "VBAでメッセージボックスに「Hello」と表示するコードを書いてください。",
+    "a": "MsgBox \"Hello\"",
+    "alt": ["MsgBox(\"Hello\")"],
+    "explanation": "MsgBox 関数はダイアログボックスにメッセージを表示します。"
+  },
+  {
+    "q": "変数 x を整数型で宣言するコードを書いてください。",
+    "a": "Dim x As Integer",
+    "alt": [],
+    "explanation": "Dim 変数名 As データ型 の形式で変数を宣言します。整数型は Integer です。"
+  },
+  {
+    "q": "VBAでFor i = 1 To 10のループを終了するキーワードは何ですか？",
+    "a": "Next i",
+    "alt": ["Next"],
+    "explanation": "For～NextループはNext（または Next 変数名）でループブロックを閉じます。"
+  },
+  {
+    "q": "VBAでコメントを書くときに行頭に使う記号は何ですか？",
+    "a": "'",
+    "alt": ["' （アポストロフィ）", "アポストロフィ"],
+    "explanation": "VBAではアポストロフィ（'）以降の文字がコメントとして扱われます。"
+  }
+]
