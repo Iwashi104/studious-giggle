@@ -1,32 +1,182 @@
 [
   {
-    "q": "VBAでセルA1の値を取得するコードを書いてください。",
-    "a": "Range(\"A1\").Value",
-    "alt": ["Cells(1,1).Value"],
-    "explanation": "Range(\"A1\").Value または Cells(1,1).Value でセルA1の値を取得できます。"
-  },
-  {
-    "q": "VBAでメッセージボックスに「Hello」と表示するコードを書いてください。",
-    "a": "MsgBox \"Hello\"",
-    "alt": ["MsgBox(\"Hello\")"],
-    "explanation": "MsgBox 関数はダイアログボックスにメッセージを表示します。"
-  },
-  {
-    "q": "変数 x を整数型で宣言するコードを書いてください。",
-    "a": "Dim x As Integer",
+    "q": "VBAでモジュールの先頭に記述することで、すべての変数を明示的に宣言することを強制するステートメントは何ですか？",
+    "a": "Option Explicit",
     "alt": [],
-    "explanation": "Dim 変数名 As データ型 の形式で変数を宣言します。整数型は Integer です。"
+    "explanation": "Option Explicit をモジュールの先頭に記述すると、Dim等で宣言されていない変数を使用した際にコンパイルエラーが発生します。バグの早期発見に役立ちます。"
   },
   {
-    "q": "VBAでFor i = 1 To 10のループを終了するキーワードは何ですか？",
-    "a": "Next i",
-    "alt": ["Next"],
-    "explanation": "For～NextループはNext（または Next 変数名）でループブロックを閉じます。"
+    "q": "VBAで変数 i を長整数型で宣言するコードを書いてください。",
+    "a": "Dim i As Long",
+    "alt": [],
+    "explanation": "Long型は-2,147,483,648～2,147,483,647の整数を扱えます。ループカウンタにはInteger型よりLong型を使う方が安全です。"
   },
   {
-    "q": "VBAでコメントを書くときに行頭に使う記号は何ですか？",
-    "a": "'",
-    "alt": ["' （アポストロフィ）", "アポストロフィ"],
-    "explanation": "VBAではアポストロフィ（'）以降の文字がコメントとして扱われます。"
+    "q": "VBAで文字列型の変数を宣言するときに使うデータ型名は何ですか？",
+    "a": "String",
+    "alt": [],
+    "explanation": "String型は文字列を格納するデータ型です。例：Dim name As String"
+  },
+  {
+    "q": "どのデータ型でも格納できる、VBAの汎用データ型の名前は何ですか？",
+    "a": "Variant",
+    "alt": [],
+    "explanation": "Variant型はあらゆるデータ型を格納できますが、メモリ消費が大きく処理速度も遅くなるため、型が明確な場合は適切な型を指定するのが望ましいです。"
+  },
+  {
+    "q": "VBAでTrue／Falseを格納するデータ型の名前は何ですか？",
+    "a": "Boolean",
+    "alt": [],
+    "explanation": "Boolean型はTrueまたはFalseの2値を格納します。条件フラグなどに使います。例：Dim flag As Boolean"
+  },
+  {
+    "q": "セルA1に値「100」を代入するVBAのコードを書いてください。",
+    "a": "Range(\"A1\").Value = 100",
+    "alt": ["Cells(1,1).Value = 100"],
+    "explanation": "Range(\"A1\").Value または Cells(行,列).Value でセルへの値の代入ができます。"
+  },
+  {
+    "q": "アクティブシートのセルB2の文字色を赤にするコードを書いてください。",
+    "a": "Range(\"B2\").Font.Color = RGB(255, 0, 0)",
+    "alt": ["Range(\"B2\").Font.Color = vbRed"],
+    "explanation": "Font.ColorプロパティにRGB関数またはvbRedなどの定数を使って色を指定します。"
+  },
+  {
+    "q": "VBAで現在選択されているセルを表すオブジェクトは何ですか？",
+    "a": "Selection",
+    "alt": [],
+    "explanation": "Selectionは現在選択されているセルや範囲を参照します。ただし選択状態に依存するコードは汎用性が低いため、明示的なRangeオブジェクトを使う方が推奨されます。"
+  },
+  {
+    "q": "セルA1を基点に1行下・2列右のセルを参照するOffsetプロパティを使ったコードを書いてください。",
+    "a": "Range(\"A1\").Offset(1, 2)",
+    "alt": [],
+    "explanation": "Offset(行数, 列数)で基点セルからの相対位置を指定します。負の値で上・左方向への参照も可能です。"
+  },
+  {
+    "q": "VBAでA1:C3の範囲をコピーするコードを書いてください。",
+    "a": "Range(\"A1:C3\").Copy",
+    "alt": [],
+    "explanation": "RangeオブジェクトのCopyメソッドで範囲をクリップボードにコピーします。貼り付け先を引数に指定することもできます。"
+  },
+  {
+    "q": "「Sheet1」という名前のワークシートをアクティブにするコードを書いてください。",
+    "a": "Worksheets(\"Sheet1\").Activate",
+    "alt": ["Sheets(\"Sheet1\").Activate"],
+    "explanation": "Worksheets(シート名).Activate でシートをアクティブにします。Sheets コレクションでも同様の操作が可能です。"
+  },
+  {
+    "q": "VBAで新しいワークシートを末尾に追加するコードを書いてください。",
+    "a": "Worksheets.Add After:=Worksheets(Worksheets.Count)",
+    "alt": ["Sheets.Add After:=Sheets(Sheets.Count)"],
+    "explanation": "Add メソッドのAfter引数に最後のシートを指定することで末尾に追加できます。Before引数を使えば先頭への追加も可能です。"
+  },
+  {
+    "q": "VBAでブック内のワークシートの枚数を取得するコードを書いてください。",
+    "a": "Worksheets.Count",
+    "alt": ["Sheets.Count"],
+    "explanation": "Worksheets.Count でブック内のワークシート数を整数で取得できます。"
+  },
+  {
+    "q": "現在のブックのファイルパスを取得するプロパティは何ですか？",
+    "a": "ThisWorkbook.Path",
+    "alt": [],
+    "explanation": "ThisWorkbook.Path でそのマクロが含まれるブックの保存先フォルダパスを文字列で取得できます。"
+  },
+  {
+    "q": "VBAでFor i = 1 To 5のループ内で、iが3のときにループを抜けるコードを書いてください。",
+    "a": "If i = 3 Then Exit For",
+    "alt": [],
+    "explanation": "Exit For を使うとForループを途中で抜けることができます。Do ループの場合は Exit Do を使います。"
+  },
+  {
+    "q": "VBAで条件を満たす間ループし続けるDo Loopの構文を書いてください。（条件式はx < 10とします）",
+    "a": "Do While x < 10",
+    "alt": [],
+    "explanation": "Do While 条件式 ～ Loop の形で、条件がTrueの間ループします。条件をLoopの後に書くDo ～ Loop While もあり、こちらは必ず1回実行されます。"
+  },
+  {
+    "q": "VBAのSelect Caseステートメントで、どのCaseにも一致しない場合の処理を記述するキーワードは何ですか？",
+    "a": "Case Else",
+    "alt": [],
+    "explanation": "Case Else はSelect Caseのいずれの値にも一致しなかった場合に実行されるブロックです。省略することもできます。"
+  },
+  {
+    "q": "VBAでIfブロックを終了するキーワードを書いてください。",
+    "a": "End If",
+    "alt": [],
+    "explanation": "複数行のIfステートメントはEnd Ifで閉じます。1行のIf文（インラインIf）の場合はEnd Ifは不要です。"
+  },
+  {
+    "q": "戻り値のないプロシージャを定義するキーワードは何ですか？",
+    "a": "Sub",
+    "alt": [],
+    "explanation": "Subプロシージャは処理をまとめたものですが値を返しません。値を返す場合はFunctionプロシージャを使います。"
+  },
+  {
+    "q": "VBAで引数を2つ受け取り、その合計を返すFunctionプロシージャの1行目を書いてください。（引数名はa, b、型はLong、戻り値もLong）",
+    "a": "Function Sum(a As Long, b As Long) As Long",
+    "alt": [],
+    "explanation": "Function プロシージャ名(引数リスト) As 戻り値型 の形で定義します。戻り値はプロシージャ名に代入することで返します。"
+  },
+  {
+    "q": "VBAで同じモジュール内からのみ呼び出せるプロシージャにするキーワードは何ですか？",
+    "a": "Private",
+    "alt": [],
+    "explanation": "Private を付けることでそのモジュール内からのみアクセスできます。他のモジュールからも呼び出せるようにするにはPublicを使います。"
+  },
+  {
+    "q": "要素数5の整数配列を宣言するコードを書いてください。（変数名はarr、型はLong）",
+    "a": "Dim arr(4) As Long",
+    "alt": ["Dim arr(0 To 4) As Long"],
+    "explanation": "VBAの配列は既定でインデックスが0から始まるため、要素数5はDim arr(4)と宣言します。Option Base 1を使うと1始まりになります。"
+  },
+  {
+    "q": "VBAで配列の最大インデックスを取得する関数は何ですか？",
+    "a": "UBound",
+    "alt": [],
+    "explanation": "UBound(配列名)で配列の最大インデックスを返します。最小インデックスはLBound(配列名)で取得します。"
+  },
+  {
+    "q": "エラーが発生したとき、エラーを無視して次の行に進む命令を書いてください。",
+    "a": "On Error Resume Next",
+    "alt": [],
+    "explanation": "On Error Resume Next はエラーが発生しても処理を続行します。ただし予期しないエラーを見逃す可能性があるため、使用範囲を限定し必ずOn Error GoTo 0でリセットすることが推奨されます。"
+  },
+  {
+    "q": "エラー処理をエラーハンドララベル「ErrHandler」に飛ばす命令を書いてください。",
+    "a": "On Error GoTo ErrHandler",
+    "alt": [],
+    "explanation": "On Error GoTo ラベル名 でエラー発生時に指定ラベルへジャンプします。エラーハンドラの末尾にはResume、Resume Next、またはExit Sub等を記述します。"
+  },
+  {
+    "q": "With文を使ってRange(\"A1\")のValueを100に、Font.BoldをTrueに設定するコードを書いてください。",
+    "a": "With Range(\"A1\")\n.Value = 100\n.Font.Bold = True\nEnd With",
+    "alt": [],
+    "explanation": "With ～ End With の間では、オブジェクト名を省略してピリオドから書けます。同じオブジェクトに複数の操作をする場合にコードが簡潔になります。"
+  },
+  {
+    "q": "VBAでユーザーからテキスト入力を受け取るための関数は何ですか？",
+    "a": "InputBox",
+    "alt": [],
+    "explanation": "InputBox関数はダイアログを表示してユーザーの入力を文字列として受け取ります。キャンセル時は空文字列を返します。"
+  },
+  {
+    "q": "イミディエイトウィンドウに変数xの値を出力するコードを書いてください。",
+    "a": "Debug.Print x",
+    "alt": [],
+    "explanation": "Debug.Print はVBEのイミディエイトウィンドウに値を出力します。デバッグ時の値確認に便利で、実行時のパフォーマンスへの影響も軽微です。"
+  },
+  {
+    "q": "VBAでA列の最終行番号を取得するコードを書いてください。",
+    "a": "Cells(Rows.Count, 1).End(xlUp).Row",
+    "alt": ["Range(\"A\" & Rows.Count).End(xlUp).Row"],
+    "explanation": "Rows.Countでシートの最終行（1048576行）を取得し、End(xlUp)で上方向に最初のデータがあるセルまで移動します。データ件数の取得によく使われる定番コードです。"
+  },
+  {
+    "q": "VBAでオートフィルタをA1セルを基点に設定するコードを書いてください。",
+    "a": "Range(\"A1\").AutoFilter",
+    "alt": [],
+    "explanation": "AutoFilterメソッドでオートフィルタの設定・解除を切り替えます。Field引数やCriteria1引数を追加することで特定列の絞り込み条件も指定できます。"
   }
 ]
