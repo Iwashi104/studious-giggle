@@ -351,7 +351,7 @@ function init() {
       return res.json();
     })
     .then(data => {
-      questions    = shuffle(data);
+      questions    = shuffle(data).slice(0, 10);
       currentIdx   = 0;
       correctCount = 0;
       cliffOffset  = 0;
@@ -382,20 +382,13 @@ function buildCliff() {
   strip.innerHTML = '';
   strip.style.transform = 'translateY(0px)';
 
-  // 通常パネルを先に追加（column-reverseで下に積まれる）
-  const extraPanels = Math.ceil(window.innerHeight / CLIFF_PANEL_H) + 1;
-  for (let i = 0; i < TOTAL_PANELS + extraPanels; i++) {
+  // 通常パネル + 頂上パネル（一番上）
+  for (let i = 0; i <= TOTAL_PANELS; i++) {
     const panel = document.createElement('div');
-    panel.className = 'cliff-panel';
+    panel.className = 'cliff-panel' + (i === TOTAL_PANELS ? ' summit' : '');
     panel.style.height = CLIFF_PANEL_H + 'px';
     strip.appendChild(panel);
   }
-
-  // 頂上パネルを最後に追加（column-reverseで一番上に来る）
-  const summit = document.createElement('div');
-  summit.className = 'cliff-panel summit';
-  summit.style.height = CLIFF_PANEL_H + 'px';
-  strip.appendChild(summit);
 }
 
 // ── 問題表示 ──
@@ -530,7 +523,7 @@ fetch('questions.json')
   })
   .then(data => {
     // JSONデータを questions にセットして初期化
-    questions    = shuffle(data);
+    questions    = shuffle(data).slice(0, 10);
     currentIdx   = 0;
     correctCount = 0;
     cliffOffset  = 0;

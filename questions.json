@@ -32,13 +32,17 @@
   {
     "q": "セルA1に値「100」を代入するVBAのコードを書いてください。",
     "a": "Range(\"A1\").Value = 100",
-    "alt": ["Cells(1,1).Value = 100"],
+    "alt": [
+      "Cells(1,1).Value = 100"
+    ],
     "explanation": "Range(\"A1\").Value または Cells(行,列).Value でセルへの値の代入ができます。"
   },
   {
     "q": "アクティブシートのセルB2の文字色を赤にするコードを書いてください。",
     "a": "Range(\"B2\").Font.Color = RGB(255, 0, 0)",
-    "alt": ["Range(\"B2\").Font.Color = vbRed"],
+    "alt": [
+      "Range(\"B2\").Font.Color = vbRed"
+    ],
     "explanation": "Font.ColorプロパティにRGB関数またはvbRedなどの定数を使って色を指定します。"
   },
   {
@@ -62,19 +66,25 @@
   {
     "q": "「Sheet1」という名前のワークシートをアクティブにするコードを書いてください。",
     "a": "Worksheets(\"Sheet1\").Activate",
-    "alt": ["Sheets(\"Sheet1\").Activate"],
+    "alt": [
+      "Sheets(\"Sheet1\").Activate"
+    ],
     "explanation": "Worksheets(シート名).Activate でシートをアクティブにします。Sheets コレクションでも同様の操作が可能です。"
   },
   {
     "q": "VBAで新しいワークシートを末尾に追加するコードを書いてください。",
     "a": "Worksheets.Add After:=Worksheets(Worksheets.Count)",
-    "alt": ["Sheets.Add After:=Sheets(Sheets.Count)"],
+    "alt": [
+      "Sheets.Add After:=Sheets(Sheets.Count)"
+    ],
     "explanation": "Add メソッドのAfter引数に最後のシートを指定することで末尾に追加できます。Before引数を使えば先頭への追加も可能です。"
   },
   {
     "q": "VBAでブック内のワークシートの枚数を取得するコードを書いてください。",
     "a": "Worksheets.Count",
-    "alt": ["Sheets.Count"],
+    "alt": [
+      "Sheets.Count"
+    ],
     "explanation": "Worksheets.Count でブック内のワークシート数を整数で取得できます。"
   },
   {
@@ -128,7 +138,9 @@
   {
     "q": "要素数5の整数配列を宣言するコードを書いてください。（変数名はarr、型はLong）",
     "a": "Dim arr(4) As Long",
-    "alt": ["Dim arr(0 To 4) As Long"],
+    "alt": [
+      "Dim arr(0 To 4) As Long"
+    ],
     "explanation": "VBAの配列は既定でインデックスが0から始まるため、要素数5はDim arr(4)と宣言します。Option Base 1を使うと1始まりになります。"
   },
   {
@@ -170,7 +182,9 @@
   {
     "q": "VBAでA列の最終行番号を取得するコードを書いてください。",
     "a": "Cells(Rows.Count, 1).End(xlUp).Row",
-    "alt": ["Range(\"A\" & Rows.Count).End(xlUp).Row"],
+    "alt": [
+      "Range(\"A\" & Rows.Count).End(xlUp).Row"
+    ],
     "explanation": "Rows.Countでシートの最終行（1048576行）を取得し、End(xlUp)で上方向に最初のデータがあるセルまで移動します。データ件数の取得によく使われる定番コードです。"
   },
   {
@@ -212,7 +226,9 @@
   {
     "q": "VBAでA1:C5の範囲の背景色を黄色にするコードを書いてください。",
     "a": "Range(\"A1:C5\").Interior.Color = RGB(255, 255, 0)",
-    "alt": ["Range(\"A1:C5\").Interior.Color = vbYellow"],
+    "alt": [
+      "Range(\"A1:C5\").Interior.Color = vbYellow"
+    ],
     "explanation": "Interior.ColorプロパティでセルやRange全体の背景色を設定します。RGB関数または色定数が使えます。"
   },
   {
@@ -242,13 +258,18 @@
   {
     "q": "VBAでブックを上書き保存するコードを書いてください。",
     "a": "ThisWorkbook.Save",
-    "alt": ["ActiveWorkbook.Save"],
+    "alt": [
+      "ActiveWorkbook.Save"
+    ],
     "explanation": "Saveメソッドはブックをそのファイルパスに上書き保存します。新規ブックや別名保存にはSaveAsメソッドを使います。"
   },
   {
     "q": "VBAでブックを閉じるメソッドは何ですか？",
     "a": "Workbooks.Close",
-    "alt": ["ThisWorkbook.Close", "ActiveWorkbook.Close"],
+    "alt": [
+      "ThisWorkbook.Close",
+      "ActiveWorkbook.Close"
+    ],
     "explanation": "CloseメソッドはWorkbookオブジェクトを閉じます。SaveChanges引数にTrue/Falseを指定して保存有無を制御できます。"
   },
   {
@@ -260,7 +281,9 @@
   {
     "q": "VBAでFor Each～Nextを使い、コレクション内の全要素を順番に処理するとき、要素を格納する変数の型は何にする必要がありますか？",
     "a": "Object",
-    "alt": ["Variant"],
+    "alt": [
+      "Variant"
+    ],
     "explanation": "For Each の変数はObjectまたはVariant型である必要があります。ただし具体的なオブジェクト型（WorksheetやRangeなど）を指定することでより明示的に書けます。"
   },
   {
@@ -358,5 +381,187 @@
     "a": "MsgBox \"確認\", vbYesNo",
     "alt": [],
     "explanation": "MsgBoxの第2引数にvbYesNoを指定すると「はい」「いいえ」ボタンが表示されます。戻り値はvbYes(6)またはvbNo(7)で判定します。"
+  },
+  {
+    "q": "VBAで指定したファイルが存在するかどうかを確認する関数は何ですか？",
+    "a": "Dir",
+    "alt": [],
+    "explanation": "Dir(ファイルパス)はファイルが存在すればそのファイル名を、存在しなければ空文字列を返します。If Dir(path) <> \"\" Then で存在確認するのが定番です。"
+  },
+  {
+    "q": "VBAでファイルを別の場所にコピーするステートメントは何ですか？",
+    "a": "FileCopy",
+    "alt": [],
+    "explanation": "FileCopy 元のパス, コピー先のパス の形で使います。コピー先に同名ファイルがある場合は上書きされます。"
+  },
+  {
+    "q": "VBAでファイルを削除するステートメントは何ですか？",
+    "a": "Kill",
+    "alt": [],
+    "explanation": "Kill ファイルパス でファイルを削除します。ワイルドカード（*）を使って複数ファイルを一括削除することもできます。削除したファイルはゴミ箱に入らないため注意が必要です。"
+  },
+  {
+    "q": "VBAでファイルやフォルダの名前を変更・移動するステートメントは何ですか？",
+    "a": "Name",
+    "alt": [],
+    "explanation": "Name 旧パス As 新パス の形で使います。同一ドライブ内であればファイルの移動にも使えます。"
+  },
+  {
+    "q": "VBAでテキストファイルを読み込むために使うOpen文の構文を書いてください。（ファイル名はpath、ファイル番号は1）",
+    "a": "Open path For Input As #1",
+    "alt": [],
+    "explanation": "Open ファイルパス For Input As #ファイル番号 でテキストファイルを読み込みモードで開きます。書き込みはFor Output、追記はFor Appendを使います。"
+  },
+  {
+    "q": "VBAでOpenステートメントで開いたファイルを閉じるステートメントを書いてください。（ファイル番号は1）",
+    "a": "Close #1",
+    "alt": [],
+    "explanation": "Close #ファイル番号 で開いたファイルを閉じます。すべてのファイルを閉じるにはClose（番号省略）を使います。ファイルを開いたら必ず閉じることが重要です。"
+  },
+  {
+    "q": "VBAで新しいフォルダを作成するステートメントは何ですか？",
+    "a": "MkDir",
+    "alt": [],
+    "explanation": "MkDir フォルダパス で新しいフォルダを作成します。すでに同名のフォルダが存在するとエラーになるため、Dir関数で事前確認するのが一般的です。"
+  },
+  {
+    "q": "VBAからワークシート関数のSUM関数を呼び出し、A1:A10の合計を取得するコードを書いてください。",
+    "a": "WorksheetFunction.Sum(Range(\"A1:A10\"))",
+    "alt": [],
+    "explanation": "WorksheetFunctionオブジェクトを通じてExcelのワークシート関数をVBAから呼び出せます。Sum、Average、VLookupなど多くの関数が利用可能です。"
+  },
+  {
+    "q": "VBAからVLOOKUP関数を使い、セルA1の値をA:B列の表で検索して2列目の値を完全一致で取得するコードを書いてください。",
+    "a": "WorksheetFunction.VLookup(Range(\"A1\"), Range(\"A:B\"), 2, False)",
+    "alt": [],
+    "explanation": "WorksheetFunction.VLookupの第4引数にFalseを指定すると完全一致検索になります。Trueまたは省略すると近似一致になります。"
+  },
+  {
+    "q": "VBAからワークシート関数を呼び出すオブジェクト名は何ですか？",
+    "a": "WorksheetFunction",
+    "alt": [],
+    "explanation": "Application.WorksheetFunctionまたはWorksheetFunctionでExcelのワークシート関数をVBAから使えます。ただし対応していない関数はEvaluateメソッドを使う方法もあります。"
+  },
+  {
+    "q": "VBAでセルA1:A10の中の最大値をワークシート関数を使って取得するコードを書いてください。",
+    "a": "WorksheetFunction.Max(Range(\"A1:A10\"))",
+    "alt": [],
+    "explanation": "WorksheetFunction.MaxはExcelのMAX関数と同じく、指定範囲の最大値を返します。最小値はWorksheetFunction.Minで取得できます。"
+  },
+  {
+    "q": "VBAでワークシート関数のCOUNTIF関数を使い、A1:A10の中で値が「合格」のセル数を取得するコードを書いてください。",
+    "a": "WorksheetFunction.CountIf(Range(\"A1:A10\"), \"合格\")",
+    "alt": [],
+    "explanation": "WorksheetFunction.CountIfは条件に一致するセルの個数を返します。複数条件はWorksheetFunction.CountIfsを使います。"
+  },
+  {
+    "q": "VBAでEvaluateメソッドを使ってSUM(A1:A10)の結果を取得するコードを書いてください。",
+    "a": "Evaluate(\"SUM(A1:A10)\")",
+    "alt": [
+      "Application.Evaluate(\"SUM(A1:A10)\")"
+    ],
+    "explanation": "Evaluateメソッドは数式文字列をExcel式として評価して結果を返します。WorksheetFunctionで対応していない関数を呼び出す際にも使えます。"
+  },
+  {
+    "q": "VBAでA列から値「Excel」を検索するFindメソッドのコードを書いてください。",
+    "a": "Range(\"A:A\").Find(\"Excel\")",
+    "alt": [],
+    "explanation": "FindメソッドはRangeオブジェクトに対して使い、条件に一致する最初のセルをRangeオブジェクトで返します。見つからない場合はNothingを返します。"
+  },
+  {
+    "q": "VBAでFindメソッドの結果がNothingかどうか確認する条件式を書いてください。（結果を変数cellに格納した場合）",
+    "a": "cell Is Nothing",
+    "alt": [],
+    "explanation": "オブジェクト変数がNothingかどうかはIs演算子で確認します。If cell Is Nothing Then のように使います。= 演算子では比較できません。"
+  },
+  {
+    "q": "VBAでFindメソッドで見つかったセルの次の一致セルを検索するメソッドは何ですか？",
+    "a": "FindNext",
+    "alt": [],
+    "explanation": "FindNextメソッドはFindで検索を開始した後、次の一致セルを返します。Do Loopと組み合わせてすべての一致セルを順番に処理する際に使います。"
+  },
+  {
+    "q": "VBAでA1:C10の範囲内の文字列「旧データ」をすべて「新データ」に置換するコードを書いてください。",
+    "a": "Range(\"A1:C10\").Replace \"旧データ\", \"新データ\"",
+    "alt": [],
+    "explanation": "ReplaceメソッドはRangeオブジェクト内の文字列を一括置換します。ExcelのCtrl+Hに相当する操作をVBAで自動化できます。"
+  },
+  {
+    "q": "VBAでFindメソッドを使って完全一致で検索するには、どの引数に何を指定しますか？",
+    "a": "LookAt:=xlWhole",
+    "alt": [],
+    "explanation": "LookAt引数にxlWholeを指定すると完全一致検索になります。部分一致にはxlPartを指定します。省略すると直前の検索設定が引き継がれるため、明示的に指定するのが安全です。"
+  },
+  {
+    "q": "VBAでA1を基点にオートフィルターを設定し、1列目で「東京」に絞り込むコードを書いてください。",
+    "a": "Range(\"A1\").AutoFilter Field:=1, Criteria1:=\"東京\"",
+    "alt": [],
+    "explanation": "AutoFilterメソッドのField引数で対象列（左から何列目か）、Criteria1引数で絞り込み条件を指定します。"
+  },
+  {
+    "q": "VBAでオートフィルターの絞り込みを解除し、全データを表示するコードを書いてください。",
+    "a": "ActiveSheet.ShowAllData",
+    "alt": [],
+    "explanation": "ShowAllDataメソッドはオートフィルターを解除せずに絞り込み条件だけをクリアして全データを表示します。オートフィルター自体を削除するにはAutoFilterメソッドを再度呼びます。"
+  },
+  {
+    "q": "VBAでオートフィルターが設定されているかどうかを確認するプロパティは何ですか？",
+    "a": "ActiveSheet.AutoFilterMode",
+    "alt": [],
+    "explanation": "AutoFilterModeプロパティがTrueの場合、シートにオートフィルターが設定されています。Falseにするとオートフィルターをオフにできますが、Trueに設定することはできません。"
+  },
+  {
+    "q": "VBAでオートフィルターで複数条件（「東京」または「大阪」）に絞り込むコードを書いてください。（1列目を対象）",
+    "a": "Range(\"A1\").AutoFilter Field:=1, Criteria1:=\"東京\", Operator:=xlOr, Criteria2:=\"大阪\"",
+    "alt": [],
+    "explanation": "Operator引数にxlOrを指定するとCriteria1とCriteria2のいずれかに一致するデータを絞り込みます。AND条件にはxlAndを使います。"
+  },
+  {
+    "q": "VBAでA1:C10の範囲をA列（1列目）を基準に昇順で並べ替えるコードを書いてください。",
+    "a": "Range(\"A1:C10\").Sort Key1:=Range(\"A1\"), Order1:=xlAscending",
+    "alt": [],
+    "explanation": "SortメソッドはKey1に並べ替えの基準列、Order1に昇順（xlAscending）または降順（xlDescending）を指定します。Header引数でヘッダー行の有無も指定できます。"
+  },
+  {
+    "q": "VBAのSortメソッドで、1行目をヘッダーとして並べ替え対象から除外するにはどの引数に何を指定しますか？",
+    "a": "Header:=xlYes",
+    "alt": [],
+    "explanation": "Header引数にxlYesを指定すると1行目をヘッダーとして扱い並べ替え対象から除きます。xlNoで全行対象、xlGuessで自動判定になります。"
+  },
+  {
+    "q": "VBAでSortメソッドを使ってA列を第1キー（昇順）、B列を第2キー（降順）で並べ替えるコードを書いてください。（範囲はA1:C10）",
+    "a": "Range(\"A1:C10\").Sort Key1:=Range(\"A1\"), Order1:=xlAscending, Key2:=Range(\"B1\"), Order2:=xlDescending",
+    "alt": [],
+    "explanation": "Key2・Order2引数で第2の並べ替えキーを指定できます。さらにKey3・Order3で第3キーまで設定可能です。"
+  },
+  {
+    "q": "VBAでシート上の1つ目のテーブル（ListObject）を取得するコードを書いてください。",
+    "a": "ActiveSheet.ListObjects(1)",
+    "alt": [],
+    "explanation": "ListObjectsコレクションはシート上のテーブルを管理します。インデックスまたはテーブル名（ListObjects(\"テーブル名\")）で特定のテーブルを取得できます。"
+  },
+  {
+    "q": "VBAでテーブルのデータ範囲（ヘッダーを除く）を取得するプロパティは何ですか？",
+    "a": "ListObject.DataBodyRange",
+    "alt": [],
+    "explanation": "DataBodyRangeプロパティはテーブルのヘッダーを除いたデータ行の範囲をRangeオブジェクトで返します。ヘッダー行を含む範囲はRangeプロパティで取得します。"
+  },
+  {
+    "q": "VBAでテーブルに新しい行を末尾に追加するメソッドは何ですか？",
+    "a": "ListObject.ListRows.Add",
+    "alt": [],
+    "explanation": "ListRows.AddメソッドでテーブルにListRowオブジェクトを追加します。引数なしで末尾に追加されます。追加した行はListRowオブジェクトとして返されます。"
+  },
+  {
+    "q": "VBAでテーブル名「売上表」の行数（データ行のみ）を取得するコードを書いてください。",
+    "a": "ActiveSheet.ListObjects(\"売上表\").ListRows.Count",
+    "alt": [],
+    "explanation": "ListRows.Countプロパティでテーブルのデータ行数（ヘッダーを除く）を取得できます。ListColumns.Countで列数を取得できます。"
+  },
+  {
+    "q": "VBAでSortメソッドの並べ替え順序を降順に指定する定数は何ですか？",
+    "a": "xlDescending",
+    "alt": [],
+    "explanation": "Order引数にxlDescendingを指定すると降順（大→小）で並べ替えます。昇順はxlAscendingです。"
   }
 ]
