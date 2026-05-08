@@ -282,6 +282,70 @@
     cursor: pointer;
     letter-spacing: 0.05em;
   }
+
+  /* カテゴリ選択画面 */
+  #category-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 8, 4, 0.88);
+    padding: 32px 24px;
+    text-align: center;
+  }
+  #category-screen.hidden { display: none; }
+  #category-title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.6);
+  }
+  #category-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  #category-list {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .category-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: var(--text-light);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s, border-color 0.2s;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+  .category-btn:hover {
+    background: rgba(232, 200, 122, 0.15);
+    border-color: var(--accent);
+  }
+  .category-btn:active { transform: scale(0.98); }
+  .category-btn .cat-label {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
 </style>
 </head>
 <body>
@@ -319,7 +383,14 @@
 <div id="summit-screen">
   <div id="summit-title">🏔 頂上到達！</div>
   <div id="summit-sub"></div>
-  <button id="restart-btn" onclick="restartQuiz()">もう一度挑戦する</button>
+  <button id="restart-btn" onclick="showCategoryScreen()">カテゴリ選択へ戻る</button>
+</div>
+
+<!-- カテゴリ選択画面 -->
+<div id="category-screen">
+  <div id="category-title">🧗 崖登りクイズ</div>
+  <div id="category-sub">カテゴリを選んでください</div>
+  <div id="category-list"></div>
 </div>
 
 <script>
@@ -335,6 +406,21 @@ const CLIFF_PANEL_H  = 400;   // cliff.png の縦px に合わせる
 const SKY_SCROLL_PX  = 200;   // 背景スクロール量（小さいほどゆっくり）
 const TOTAL_PANELS   = 14;    // 崖パネル枚数（問題数より多めに）
 
+// ── カテゴリ定義 ──
+// 新しいカテゴリを追加する場合はここに追記するだけ
+const CATEGORIES = [
+  {
+    id: 'vba',
+    label: 'VBAエキスパート Excel Standard',
+    file: 'questions_vba.json',
+  },
+  {
+    id: 'python',
+    label: 'Python 3 エンジニア認定基礎試験',
+    file: 'questions_python.json',
+  },
+];
+
 // ── 状態 ──
 let questions    = [];
 let currentIdx   = 0;
@@ -343,11 +429,38 @@ let isAnimating  = false;
 let cliffOffset  = 0;   // 崖ストリップの累積移動量(px)
 let skyOffset    = 0;   // 背景の累積移動量(px)
 
-// ── 初期化（restartQuiz から呼ぶ用） ──
-function init() {
-  fetch('questions.json')
+
+
+// ── カテゴリ選択画面 ──
+function showCategoryScreen() {
+  // 頂上・クイズ画面を隠す
+  document.getElementById('summit-screen').classList.remove('show');
+  document.getElementById('quiz-card').classList.add('hidden');
+  document.getElementById('quiz-overlay');
+
+  // ボタンを動的生成
+  const list = document.getElementById('category-list');
+  list.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'category-btn';
+    btn.innerHTML = `<span class="cat-label">カテゴリ</span>${cat.label}`;
+    btn.onclick = () => startCategory(cat);
+    list.appendChild(btn);
+  });
+
+  document.getElementById('category-screen').classList.remove('hidden');
+}
+
+function startCategory(cat) {
+  document.getElementById('category-screen').classList.add('hidden');
+  loadAndStart(cat.file);
+}
+
+function loadAndStart(jsonFile) {
+  fetch(jsonFile)
     .then(res => {
-      if (!res.ok) throw new Error('questions.json が見つかりません');
+      if (!res.ok) throw new Error(jsonFile + ' が見つかりません');
       return res.json();
     })
     .then(data => {
@@ -362,8 +475,8 @@ function init() {
       updateUI();
     })
     .catch(err => {
-      document.getElementById('question-text').textContent =
-        '問題データの読み込みに失敗しました。questions.json を確認してください。';
+      document.getElementById('category-screen').classList.remove('hidden');
+      alert('問題データの読み込みに失敗しました。' + err.message);
       console.error(err);
     });
 }
@@ -505,7 +618,7 @@ function showSummit() {
 
 function restartQuiz() {
   document.getElementById('summit-screen').classList.remove('show');
-  init();
+  showCategoryScreen();
 }
 
 // Enterキーで答え合わせ
@@ -515,30 +628,8 @@ document.getElementById('answer-input').addEventListener('keydown', e => {
   }
 });
 
-// ── 問題データをJSONから読み込んで起動 ──
-fetch('questions.json')
-  .then(res => {
-    if (!res.ok) throw new Error('questions.json が見つかりません');
-    return res.json();
-  })
-  .then(data => {
-    // JSONデータを questions にセットして初期化
-    questions    = shuffle(data).slice(0, 10);
-    currentIdx   = 0;
-    correctCount = 0;
-    cliffOffset  = 0;
-    skyOffset    = 0;
-    document.getElementById('bg-img').style.transform = 'translateY(0px)';
-    buildCliff();
-    showQuestion();
-    updateUI();
-  })
-  .catch(err => {
-    // 読み込み失敗時はカードにエラーを表示
-    document.getElementById('question-text').textContent =
-      '問題データの読み込みに失敗しました。questions.json を確認してください。';
-    console.error(err);
-  });
+// 起動時はカテゴリ選択画面を表示
+showCategoryScreen();
 </script>
 </body>
 </html>
