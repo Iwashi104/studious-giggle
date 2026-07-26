@@ -242,6 +242,45 @@
   }
   #next-btn:active { transform: scale(0.98); }
 
+  /* 4択選択肢 */
+  #choices-area {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  #choices-area.show { display: flex; }
+  .choice-btn {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: var(--font-sans);
+    text-align: left;
+    background: #fff;
+    border: 1.5px solid #d0c8b8;
+    border-radius: 10px;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    line-height: 1.5;
+  }
+  .choice-btn:hover:not(:disabled) {
+    background: #f5f0e0;
+    border-color: var(--accent-dark);
+  }
+  .choice-btn.correct-choice {
+    background: #eafaf0;
+    border-color: #a8dbb8;
+    color: #1a5a30;
+    font-weight: 700;
+  }
+  .choice-btn.wrong-choice {
+    background: #fdf0ef;
+    border-color: #f0b8b0;
+    color: #7a1a10;
+  }
+  .choice-btn:disabled { cursor: default; }
+
   /* 頂上画面 */
   #summit-screen {
     position: fixed;
@@ -370,6 +409,7 @@
     <div id="question-text"></div>
     <input type="text" id="answer-input" placeholder="答えを入力してください"
       autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div id="choices-area"></div>
     <button id="submit-btn" onclick="checkAnswer()">答え合わせ</button>
     <div id="result-area">
       <div id="result-verdict"></div>
@@ -476,7 +516,8 @@ function loadAndStart(jsonFile) {
     })
     .catch(err => {
       document.getElementById('category-screen').classList.remove('hidden');
-      alert('問題データの読み込みに失敗しました。' + err.message);
+      alert('問題データの読み込みに失敗しました。
+' + err.message);
       console.error(err);
     });
 }
@@ -507,17 +548,45 @@ function buildCliff() {
 // ── 問題表示 ──
 function showQuestion() {
   const q = questions[currentIdx];
+  const isChoice = Array.isArray(q.choices) && q.choices.length > 0;
+
   document.getElementById('question-text').textContent = q.q;
-  document.getElementById('answer-input').value = '';
-  document.getElementById('answer-input').disabled = false;
-  document.getElementById('submit-btn').textContent = '答え合わせ';
-  document.getElementById('submit-btn').onclick = checkAnswer;
-  document.getElementById('submit-btn').disabled = false;
   document.getElementById('result-area').style.display = 'none';
   document.getElementById('result-area').className = '';
   document.getElementById('next-btn').style.display = 'none';
   document.getElementById('quiz-card').classList.remove('hidden', 'scrolling');
-  setTimeout(() => document.getElementById('answer-input').focus(), 120);
+
+  if (isChoice) {
+    // 4択モード
+    document.getElementById('answer-input').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'none';
+
+    const area = document.getElementById('choices-area');
+    area.innerHTML = '';
+    area.classList.add('show');
+
+    // 選択肢をシャッフルして表示
+    const shuffled = shuffle([...q.choices]);
+    shuffled.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = choice;
+      btn.onclick = () => checkChoiceAnswer(choice);
+      area.appendChild(btn);
+    });
+  } else {
+    // 記述式モード
+    document.getElementById('choices-area').classList.remove('show');
+    document.getElementById('choices-area').innerHTML = '';
+    document.getElementById('answer-input').style.display = '';
+    document.getElementById('answer-input').value = '';
+    document.getElementById('answer-input').disabled = false;
+    document.getElementById('submit-btn').style.display = '';
+    document.getElementById('submit-btn').textContent = '答え合わせ';
+    document.getElementById('submit-btn').onclick = checkAnswer;
+    document.getElementById('submit-btn').disabled = false;
+    setTimeout(() => document.getElementById('answer-input').focus(), 120);
+  }
 }
 
 // ── 採点 ──
@@ -555,6 +624,46 @@ function checkAnswer() {
     document.getElementById('submit-btn').textContent  = 'もう一度挑戦する';
     document.getElementById('submit-btn').disabled     = false;
     document.getElementById('submit-btn').onclick      = retryQuestion;
+  }
+}
+
+// ── 4択採点 ──
+function checkChoiceAnswer(selected) {
+  const q = questions[currentIdx];
+  const isCorrect = selected === q.a;
+
+  // 全ボタンを無効化して正解・不正解を色付け
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(btn => {
+    btn.disabled = true;
+    if (btn.textContent === q.a) {
+      btn.classList.add('correct-choice');
+    } else if (btn.textContent === selected && !isCorrect) {
+      btn.classList.add('wrong-choice');
+    }
+  });
+
+  const resultArea = document.getElementById('result-area');
+  resultArea.style.display = 'block';
+  resultArea.className = isCorrect ? 'correct' : 'incorrect';
+  document.getElementById('result-verdict').textContent =
+    isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('correct-answer').textContent =
+    isCorrect ? '' : '正解：' + q.a;
+  document.getElementById('explanation-text').textContent = q.explanation;
+
+  if (isCorrect) {
+    correctCount++;
+    const isLast = currentIdx + 1 >= questions.length;
+    document.getElementById('next-btn').style.display = 'block';
+    document.getElementById('next-btn').textContent =
+      isLast ? '頂上へ！ ↑' : '次の問題へ登る ↑';
+  } else {
+    // 4択は不正解でも次へ進む（再挑戦なし）
+    const isLast = currentIdx + 1 >= questions.length;
+    document.getElementById('next-btn').style.display = 'block';
+    document.getElementById('next-btn').textContent =
+      isLast ? '頂上へ！ ↑' : '次の問題へ登る ↑';
   }
 }
 
