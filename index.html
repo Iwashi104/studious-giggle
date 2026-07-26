@@ -516,8 +516,7 @@ function loadAndStart(jsonFile) {
     })
     .catch(err => {
       document.getElementById('category-screen').classList.remove('hidden');
-      alert('問題データの読み込みに失敗しました。
-' + err.message);
+      alert('問題データの読み込みに失敗しました。' + err.message);
       console.error(err);
     });
 }
